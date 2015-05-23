@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"goseapi"
 	"os"
+	"regexp"
+	"strings"
 )
+
+var re = regexp.MustCompile(`<a href="([^"]+)".*?>(.*?)</a>`)
 
 func main() {
 	questionid := os.Args[1]
@@ -33,7 +37,16 @@ func main() {
 		}
 		for _, comment := range comments {
 			fmt.Printf("As mentioned by [%s](%s) in [the comments](%s)  \n", comment.Owner.DisplayName, comment.Owner.Link, comment.Link)
-			fmt.Printf("> %s\n\n", comment.Body)
+			body := comment.Body
+			body = strings.Replace(body, "<i>", "*", -1)
+			body = strings.Replace(body, "</i>", "*", -1)
+			body = strings.Replace(body, "<code>", "`", -1)
+			body = strings.Replace(body, "</code>", "`", -1)
+			body = strings.Replace(body, "&quot;", "\"", -1)
+			body = strings.Replace(body, "&#47;", "/", -1)
+			body = strings.Replace(body, "&#39;", "'", -1)
+			body = re.ReplaceAllString(body, "[$2]($1)")
+			fmt.Printf("> %s\n\n", body)
 		}
 	}
 }
