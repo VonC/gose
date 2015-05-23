@@ -1,0 +1,3 @@
+[submodule "deps/src/goseapi"]
+	path = deps/src/goseapi
+	url = https://VonC@github.com/VonC/goseapi
